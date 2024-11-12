@@ -1,5 +1,4 @@
-from img_detect import ImgDetect
-from actions import Actions
+from . import ImgDetect, Actions
 
 game_state = {
   "base":"base",
@@ -20,18 +19,18 @@ class GameEngine:
     return
   def action(self):
     has_champion,has_sanctum,has_target,has_mini_map,enhance_skill_available, explore_map_successfully = ImgDetect.processing()
-    if ImgDetect.enhance_skill_available():
+    if enhance_skill_available:
       Actions.use_enhance_skill()
-    if ImgDetect.has_sanctum():
+    if has_sanctum:
       Actions.get_sanctum_buff()
     if self.met_champion:
-      if not ImgDetect.has_champion():
+      if not has_champion:
         self.return_to_base()
       else:
         Actions.move_to_champion()
       return
     
-    if ImgDetect.explore_map_successfully():
+    if explore_map_successfully:
       self.return_to_base()
       return
 

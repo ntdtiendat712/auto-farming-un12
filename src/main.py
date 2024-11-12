@@ -1,10 +1,21 @@
-from modules import GameEngine;
+from modules import GameEngine
 import time
+import logging
+
+
+
+logging.basicConfig(filename="app.log", level=logging.INFO,
+                    format="%(asctime)s.%(msecs)03d - %(levelname)s - %(message)s",datefmt="%H:%M:%S")
+
+with open("app.log", "w"):
+    pass
 
 game = GameEngine()
-
 def loop(func,loop_count=5):
+    count = 0
     while True:
+        count += 1
+        logging.info(f"This is an info message: {count}")
 
         loop_time = 1/loop_count
 
