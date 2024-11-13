@@ -31,11 +31,12 @@ def loop(func,loop_count=5):
             time.sleep(loop_time - elapsed_time)
 
 def main():
+    
     if game.state == "base":
         game.go_to_escort_point()
         game.move_to_battlefield()
     else:
         game.action()
 
-loop(main,5)
+loop(main,1)
 
