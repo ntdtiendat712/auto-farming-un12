@@ -6,7 +6,9 @@ import logging
 import time
 import mss
 
-def find_point_C(A, B, length=0):
+sct = mss.mss()
+
+def find_point_C(A, B, length=20):
     # Tọa độ điểm A và B
     xA, yA = A
     xB, yB = B
@@ -53,55 +55,39 @@ def find_closest_point(points, A, B):
 
 BORDER_COLOR = "#bfb6a4"
 
-def getPointPosition():
-  print(pyautogui.position())
-  return
-  with mss.mss() as sct:
+def getPointPosition(sct):
+  borders=[]
+  square_size=1000
+  monitor = sct.monitors[0]
+  screen_width = monitor["width"]
+  screen_height = monitor["height"]
+  left = (screen_width - square_size) // 2
+  top = (screen_height - square_size) // 2
 
-    # for i, monitor in enumerate(sct.monitors[1:], start=0):  
-    #       width = monitor['width']
-    #       height = monitor['height']
-    #       print(f"Monitor {i}: {width}x{height}")
+  center_x = screen_width//2
+  center_y = screen_height//2
 
-    square_size=1000
-   
-    monitor = sct.monitors[0]
-    screen_width = monitor["width"]
-    screen_height = monitor["height"]
-    print(f"screen_width:{screen_width} screen_height:{screen_height}")
-    left = (screen_width - square_size) // 2
-    top = (screen_height - square_size) // 2
+  monitor_part = {"left": left, "top": top, "width": square_size, "height": square_size,"right":left+square_size,"bottom":top+square_size}
+  screenshot = sct.grab(monitor_part)  
+  screenshot_np = np.array(Image.frombytes("RGB", screenshot.size, screenshot.rgb))
+  print(screenshot_np[0][0])
+  matches = np.all(screenshot_np == hex_to_rgb(BORDER_COLOR), axis=-1)
+  coordinates = np.argwhere(matches)
+  borders = [[x + left, y + top] for y, x in coordinates] 
+  print(f"len:{len(borders)}")
+  if len(borders) < 1:
+    return
+  mouse_x, mouse_y = pyautogui.position()
+  print(f"{center_x},{center_y} {mouse_x},{mouse_y}")
+  closest_point = find_closest_point(borders,[center_x,center_y],[mouse_x,mouse_y])
+  print(f"closest_point:{closest_point}")
 
-    center_x = screen_width//2
-    center_y = screen_height//2
-
-    monitor_part = {"left": left, "top": top, "width": square_size, "height": square_size}
-    print(monitor_part)
-    screenshot = sct.grab(monitor_part)  # Chụp màn hình chính (hoặc thay đổi màn hình nếu cần)
-    print(f"screenshot.size{screenshot.size}")
-    screenshot_np = np.array(Image.frombytes("RGB", screenshot.size, screenshot.rgb))
-    matches = np.all(screenshot_np == hex_to_rgb(BORDER_COLOR), axis=-1)
-    coordinates = np.argwhere(matches)
-    print(coordinates)
-    borders = [[x + left, y + top] for x, y in coordinates]
-    print(borders)
-    for x, y in borders:
-        pyautogui.moveTo(997, 383)   # Di chuyển chuột tới tọa độ (x, y)
-        time.sleep(0.005)    
-    print(f"len:{len(borders)}")
-    if len(borders) < 1:
-      return
-    mouse_x, mouse_y = pyautogui.position()
-    print(f"{len(borders)} {center_x},{center_y} {mouse_x},{mouse_y}")
-    closest_point = find_closest_point(borders,[center_x,center_y],[mouse_x,mouse_y])
-    print(f"closest_point:{closest_point}")
-
-    if len(borders) < 1:
-      return
-    Cx,Cy = find_point_C([center_x,center_y],closest_point)
-    print(f"xy:   {Cx}:{Cy}")
-    # pyautogui.moveTo(1211, 1231)
-    pyautogui.moveTo(int(closest_point[0]), int(closest_point[1]))
+  if len(borders) < 1:
+    return
+  Cx,Cy = find_point_C([center_x,center_y],closest_point)
+  print(f"xy:   {Cx}:{Cy}")
+  pyautogui.moveTo(int(closest_point[0]), int(closest_point[1]))
+  pyautogui.rightClick(duration=0.1)
   return 
 
 

@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 from .command import getPointPosition
 
 class ImgDetect:
-  def processing():
+  def processing(sct):
     has_champion=False
     has_sanctum=False
     has_target=False
@@ -15,7 +15,7 @@ class ImgDetect:
     enhance_skill_available=False
     explore_map_successfully=False
     
-    getPointPosition()
+    getPointPosition(sct)
     
     ImgInfo = namedtuple("ImgInfo", ["has_champion", "has_sanctum","has_target","has_mini_map","enhance_skill_available","explore_map_successfully"])
 

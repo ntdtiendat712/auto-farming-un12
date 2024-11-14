@@ -6,9 +6,11 @@ game_state = {
 }
 
 class GameEngine:
-  def __init__(self, state="base", met_champion=False):
+  def __init__(self, state="base", met_champion=False,sct=None):
     self.state = state
     self.met_champion = met_champion
+    self.sct = sct
+
   def return_to_base(self):
     self.state = "base"
     return
@@ -18,7 +20,7 @@ class GameEngine:
   def go_to_escort_point(self):
     return
   def action(self):
-    has_champion,has_sanctum,has_target,has_mini_map,enhance_skill_available, explore_map_successfully = ImgDetect.processing()
+    has_champion,has_sanctum,has_target,has_mini_map,enhance_skill_available, explore_map_successfully = ImgDetect.processing(self.sct)
     if enhance_skill_available:
       Actions.use_enhance_skill()
     if has_sanctum:

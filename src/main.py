@@ -1,8 +1,11 @@
 from modules import GameEngine
 import time
 import logging
+import keyboard
 
+import mss
 
+sct = mss.mss()
 
 logging.basicConfig(filename="app.log", level=logging.INFO,
                     format="%(asctime)s.%(msecs)03d - %(levelname)s - %(message)s",datefmt="%H:%M:%S")
@@ -10,10 +13,15 @@ logging.basicConfig(filename="app.log", level=logging.INFO,
 with open("app.log", "w"):
     pass
 
-game = GameEngine()
+game = GameEngine(sct=sct)
+
 def loop(func,loop_count=5):
     count = 0
+    global sct
     while True:
+        if keyboard.is_pressed("F6"):
+            sct.close()
+            break
         count += 1
         logging.info(f"This is an info message: {count}")
 
@@ -38,5 +46,5 @@ def main():
     else:
         game.action()
 
-loop(main,1)
+loop(main,3)
 
